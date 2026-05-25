@@ -4,6 +4,56 @@ This repository contains the initial stage of a student project to build a clone
 
 ---
 
+## AirBnB clone - v2 (MySQL)
+
+This is a fork of the original [AirBnB_clone](https://github.com/justinmajetich/AirBnB_clone)
+project, extended for the **AirBnB clone - MySQL** stage. The original authors
+are preserved in [AUTHORS](AUTHORS); this fork is maintained by
+**Wilson Nshizirungu** (`w.nshizirun@alustudent.com`).
+
+### What changed in v2
+
+* **Two storage engines.** A new `DBStorage` engine
+  ([models/engine/db_storage.py](models/engine/db_storage.py)) backed by MySQL
+  via SQLAlchemy, alongside the existing `FileStorage`. The engine is selected
+  at runtime with the `HBNB_TYPE_STORAGE` environment variable (`db` for the
+  database engine, anything else for file storage).
+* **SQLAlchemy models.** Every model inherits from a declarative `Base` and maps
+  to a table, with relationships between `State`/`City`, `City`/`Place`,
+  `User`/`Place`, `Place`/`Review`, and a `Place`/`Amenity` many-to-many table.
+* **`create` with parameters.** The console can build an object with attributes
+  in one line: `create <Class> <key>=<value> ...` (string values use double
+  quotes with `_` for spaces, floats contain a `.`, otherwise integer).
+* **MySQL setup scripts.** [setup_mysql_dev.sql](setup_mysql_dev.sql) and
+  [setup_mysql_test.sql](setup_mysql_test.sql) prepare the development and test
+  databases, users, and privileges.
+
+### Running the console
+
+```bash
+# File storage (default)
+$ ./console.py
+
+# Database storage
+$ HBNB_MYSQL_USER=hbnb_dev HBNB_MYSQL_PWD=hbnb_dev_pwd \
+  HBNB_MYSQL_HOST=localhost HBNB_MYSQL_DB=hbnb_dev_db \
+  HBNB_TYPE_STORAGE=db ./console.py
+```
+
+### Running the tests
+
+```bash
+# FileStorage engine
+$ python3 -m unittest discover tests
+
+# DBStorage engine
+$ HBNB_ENV=test HBNB_MYSQL_USER=hbnb_test HBNB_MYSQL_PWD=hbnb_test_pwd \
+  HBNB_MYSQL_HOST=localhost HBNB_MYSQL_DB=hbnb_test_db \
+  HBNB_TYPE_STORAGE=db python3 -m unittest discover tests
+```
+
+---
+
 <center><h3>Repository Contents by Project Task</h3> </center>
 
 | Tasks | Files | Description |

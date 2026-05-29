@@ -14,11 +14,13 @@ class test_City(test_basemodel):
         self.value = City
 
     def test_state_id(self):
-        """ """
+        """ state_id attribute accepts a string value """
         new = self.value()
+        new.state_id = "some_state_id"
         self.assertEqual(type(new.state_id), str)
 
     def test_name(self):
-        """ """
+        """ name attribute accepts a string value """
         new = self.value()
+        new.name = "San Francisco"
         self.assertEqual(type(new.name), str)

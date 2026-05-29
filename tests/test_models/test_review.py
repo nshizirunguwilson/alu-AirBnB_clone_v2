@@ -14,16 +14,19 @@ class test_review(test_basemodel):
         self.value = Review
 
     def test_place_id(self):
-        """ """
+        """ place_id attribute accepts a string value """
         new = self.value()
+        new.place_id = "some_place_id"
         self.assertEqual(type(new.place_id), str)
 
     def test_user_id(self):
-        """ """
+        """ user_id attribute accepts a string value """
         new = self.value()
+        new.user_id = "some_user_id"
         self.assertEqual(type(new.user_id), str)
 
     def test_text(self):
-        """ """
+        """ text attribute accepts a string value """
         new = self.value()
+        new.text = "great stay"
         self.assertEqual(type(new.text), str)

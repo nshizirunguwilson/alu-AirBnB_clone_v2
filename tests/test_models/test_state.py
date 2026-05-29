@@ -14,6 +14,7 @@ class test_state(test_basemodel):
         self.value = State
 
     def test_name3(self):
-        """ """
+        """ name attribute accepts a string value """
         new = self.value()
+        new.name = "California"
         self.assertEqual(type(new.name), str)

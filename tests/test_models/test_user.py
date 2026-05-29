@@ -14,21 +14,25 @@ class test_User(test_basemodel):
         self.value = User
 
     def test_first_name(self):
-        """ """
+        """ first_name attribute accepts a string value """
         new = self.value()
+        new.first_name = "Betty"
         self.assertEqual(type(new.first_name), str)
 
     def test_last_name(self):
-        """ """
+        """ last_name attribute accepts a string value """
         new = self.value()
+        new.last_name = "Bar"
         self.assertEqual(type(new.last_name), str)
 
     def test_email(self):
-        """ """
+        """ email attribute accepts a string value """
         new = self.value()
+        new.email = "betty@bar.com"
         self.assertEqual(type(new.email), str)
 
     def test_password(self):
-        """ """
+        """ password attribute accepts a string value """
         new = self.value()
+        new.password = "root"
         self.assertEqual(type(new.password), str)

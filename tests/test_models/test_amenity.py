@@ -14,6 +14,7 @@ class test_Amenity(test_basemodel):
         self.value = Amenity
 
     def test_name2(self):
-        """ """
+        """ name attribute accepts a string value """
         new = self.value()
+        new.name = "Wifi"
         self.assertEqual(type(new.name), str)

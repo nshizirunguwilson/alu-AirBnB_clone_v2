@@ -1,11 +1,15 @@
 #!/usr/bin/python3
 """ Module for testing file storage"""
 import unittest
+from os import getenv
 from models.base_model import BaseModel
+from models.state import State
 from models import storage
 import os
 
 
+@unittest.skipIf(getenv('HBNB_TYPE_STORAGE') == 'db',
+                 "FileStorage tests not relevant for db storage")
 class test_fileStorage(unittest.TestCase):
     """ Class to test the file storage method """
 
@@ -21,7 +25,7 @@ class test_fileStorage(unittest.TestCase):
         """ Remove storage file at end of tests """
         try:
             os.remove('file.json')
-        except:
+        except Exception:
             pass
 
     def test_obj_list_empty(self):
@@ -31,9 +35,11 @@ class test_fileStorage(unittest.TestCase):
     def test_new(self):
         """ New object is correctly added to __objects """
         new = BaseModel()
+        storage.new(new)
+        temp = None
         for obj in storage.all().values():
             temp = obj
-        self.assertTrue(temp is obj)
+        self.assertTrue(temp is new)
 
     def test_all(self):
         """ __objects is properly returned """
@@ -57,14 +63,16 @@ class test_fileStorage(unittest.TestCase):
     def test_save(self):
         """ FileStorage save method """
         new = BaseModel()
+        storage.new(new)
         storage.save()
         self.assertTrue(os.path.exists('file.json'))
 
     def test_reload(self):
         """ Storage file is successfully loaded to __objects """
         new = BaseModel()
-        storage.save()
+        new.save()
         storage.reload()
+        loaded = None
         for obj in storage.all().values():
             loaded = obj
         self.assertEqual(new.to_dict()['id'], loaded.to_dict()['id'])
@@ -97,7 +105,9 @@ class test_fileStorage(unittest.TestCase):
     def test_key_format(self):
         """ Key is properly formatted """
         new = BaseModel()
+        storage.new(new)
         _id = new.to_dict()['id']
+        temp = None
         for key in storage.all().keys():
             temp = key
         self.assertEqual(temp, 'BaseModel' + '.' + _id)
@@ -105,5 +115,33 @@ class test_fileStorage(unittest.TestCase):
     def test_storage_var_created(self):
         """ FileStorage object storage created """
         from models.engine.file_storage import FileStorage
-        print(type(storage))
         self.assertEqual(type(storage), FileStorage)
+
+    def test_all_with_class(self):
+        """ all(cls) returns only objects of the given class """
+        s = State()
+        s.name = "California"
+        storage.new(s)
+        b = BaseModel()
+        storage.new(b)
+        result = storage.all(State)
+        self.assertIn('State.' + s.id, result)
+        self.assertNotIn('BaseModel.' + b.id, result)
+
+    def test_delete(self):
+        """ delete removes an object from __objects """
+        new = State()
+        new.name = "Nevada"
+        storage.new(new)
+        key = 'State.' + new.id
+        self.assertIn(key, storage.all())
+        storage.delete(new)
+        self.assertNotIn(key, storage.all())
+
+    def test_delete_none(self):
+        """ delete with None does nothing """
+        new = State()
+        storage.new(new)
+        count = len(storage.all())
+        storage.delete(None)
+        self.assertEqual(count, len(storage.all()))

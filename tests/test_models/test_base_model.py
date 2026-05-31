@@ -60,10 +60,11 @@ class test_basemodel(unittest.TestCase):
             self.assertEqual(j[key], i.to_dict())
 
     def test_str(self):
-        """ """
+        """ str does not expose SQLAlchemy internal state """
         i = self.value()
-        self.assertEqual(str(i), '[{}] ({}) {}'.format(self.name, i.id,
-                         i.__dict__))
+        d = {k: v for k, v in i.__dict__.items()
+             if k != '_sa_instance_state'}
+        self.assertEqual(str(i), '[{}] ({}) {}'.format(self.name, i.id, d))
 
     def test_todict(self):
         """ """

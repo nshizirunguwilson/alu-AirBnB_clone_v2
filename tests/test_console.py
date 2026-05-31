@@ -77,5 +77,52 @@ class TestConsoleCreate(unittest.TestCase):
         self.assertFalse(hasattr(obj, 'name') and obj.name == 'oops')
 
 
+@unittest.skipIf(getenv('HBNB_TYPE_STORAGE') != 'db',
+                 "MySQL database checks are only relevant for DBStorage")
+class TestConsoleCreateDB(unittest.TestCase):
+    """Validate that console commands change the MySQL database state.
+
+    These tests talk to MySQL directly through MySQLdb (not SQLAlchemy)
+    so the database state is checked independently of the storage engine.
+    """
+
+    def _connect(self):
+        """Open a raw MySQLdb connection from the environment."""
+        import MySQLdb
+        return MySQLdb.connect(
+            host=getenv('HBNB_MYSQL_HOST'),
+            user=getenv('HBNB_MYSQL_USER'),
+            passwd=getenv('HBNB_MYSQL_PWD'),
+            db=getenv('HBNB_MYSQL_DB'),
+            port=3306)
+
+    def _count(self, table):
+        """Return the number of rows in the given table."""
+        db = self._connect()
+        cur = db.cursor()
+        cur.execute("SELECT COUNT(*) FROM {}".format(table))
+        count = cur.fetchone()[0]
+        cur.close()
+        db.close()
+        return count
+
+    def test_create_state_adds_record(self):
+        """create State adds exactly one row to the states table."""
+        before = self._count('states')
+        with patch('sys.stdout', new=StringIO()):
+            HBNBCommand().onecmd('create State name="California"')
+        after = self._count('states')
+        self.assertEqual(after - before, 1)
+
+    def test_create_user_adds_record(self):
+        """create User adds exactly one row to the users table."""
+        before = self._count('users')
+        with patch('sys.stdout', new=StringIO()):
+            HBNBCommand().onecmd(
+                'create User email="a@b.com" password="pwd"')
+        after = self._count('users')
+        self.assertEqual(after - before, 1)
+
+
 if __name__ == "__main__":
     unittest.main()

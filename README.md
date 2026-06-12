@@ -190,3 +190,9 @@ Usage: <class_name>.update(<_id>, <dictionary>)
 (hbnb) ["[User] (98bea5de-9cb0-4d78-8a9d-c4de03521c30) {'updated_at': datetime.datetime(2020, 2, 19, 21, 47, 29, 134362), 'name': 'Fred the Frog', 'age': 9, 'id': '98bea5de-9cb0-4d78-8a9d-c4de03521c30', 'created_at': datetime.datetime(2020, 2, 19, 21, 47, 29, 134343)}"]
 ```
 <br>
+## Deployment of web_static
+Scripts used to deploy the static content of the AirBnB clone to the web servers:
+* `0-setup_web_static.sh` - Bash script that prepares the web servers: installs Nginx, creates the `/data/web_static/` folder structure, the `current` symbolic link and serves `/data/web_static/current/` at `/hbnb_static` using an Nginx `alias`.
+* `1-pack_web_static.py` - Fabric script with `do_pack()` that packs the `web_static` folder into a timestamped `.tgz` archive stored in `versions/`.
+* `2-do_deploy_web_static.py` - Fabric script with `do_deploy(archive_path)` that uploads an archive to both web servers, uncompresses it into `/data/web_static/releases/` and updates the `current` symbolic link.
+* `3-deploy_web_static.py` - Fabric script with `deploy()` that creates an archive with `do_pack()` and distributes it with `do_deploy()` in one step.

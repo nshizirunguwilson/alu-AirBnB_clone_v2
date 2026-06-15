@@ -1,0 +1,7 @@
+# Python cache and virtual environment
+__pycache__/
+*.pyc
+.venv/
+
+# Local storage file created while testing FileStorage
+file.json
